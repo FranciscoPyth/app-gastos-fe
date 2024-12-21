@@ -1,0 +1,37 @@
+/* Estilos generales */
+.navbar-nav {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+  
+  .navbar-nav .nav-item {
+    margin: 0;
+  }
+  
+  /* Estilos para la alineación a la derecha */
+  .navbar-nav .nav-item.ml-auto {
+    margin-left: auto;
+  }
+  
+  /* Estilos específicos para el botón de logout */
+  .logout-button {
+    color: #fff; /* Cambia el color del ícono según tus necesidades */
+  }
+  
+  .logout-button:hover {
+    color: #ddd; /* Cambia el color del ícono al pasar el ratón */
+  }
+  
+  /* Estilos para pantallas pequeñas */
+  @media (max-width: 767.98px) {
+    .logout-button {
+      display: none; /* Oculta el ícono de logout en pantallas pequeñas */
+    }
+    
+    .logout-text {
+      display: block; /* Muestra el texto de logout en pantallas pequeñas */
+      color: #fff; /* Cambia el color del texto según tus necesidades */
+    }
+  }
+  

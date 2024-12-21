@@ -1,0 +1,111 @@
+/* src/components/Login.css */
+.login-container-unique {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding-top: 10px; /* Espacio superior */
+    background-color: #f5f5f5;
+  }
+  
+  .login-form-unique {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px; /* Ancho del formulario aumentado */
+    box-sizing: border-box;
+  }
+  
+  .login-form-unique h2 {
+    text-align: center;
+    margin-bottom: 2rem; /* Aumentar el espacio inferior del título */
+    font-size: 1.5rem;
+    color: #333;
+  }
+  
+  .login-form-group-unique {
+    margin-bottom: 1rem;
+    color: #000000; /* Un negro más suave */
+  }
+  
+  .login-form-group-unique label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #2b2b2b;
+  }
+  
+  .login-form-group-unique input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  .login-form-group-unique input[type="checkbox"] {
+    width: auto;
+    margin-right: 0.5rem;
+  }
+  
+  .login-remember-me-unique {
+    display: flex;
+    align-items: center;
+  }
+  
+  .login-btn-primary-unique {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff; /* Fondo celeste */
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+  }
+  
+  .login-btn-primary-unique:hover {
+    background-color: #0056b3;
+  }
+  
+  .toast-success {
+    background-color: #28a745;
+  }
+  
+  .toast-error {
+    background-color: #dc3545;
+  }
+  
+  .toast-warning {
+    background-color: #ffc107;
+  }
+  
+  .toast-info {
+    background-color: #17a2b8;
+  }
+  
+  .login-footer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    position: absolute;
+    bottom: 10px;
+  }
+  
+  .login-footer p {
+    margin-bottom: 10px;
+  }
+  
+  .login-footer a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .login-footer a:hover {
+    text-decoration: underline;
+  }

@@ -1,0 +1,5 @@
+.modal-body-scroll {
+    max-height: 500px; /* Ajusta este valor según tus necesidades */
+    overflow-y: auto;
+  }
+  
