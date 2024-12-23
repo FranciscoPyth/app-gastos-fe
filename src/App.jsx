@@ -1,7 +1,6 @@
 // App.js
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Inicio } from './components/Inicio';
 import { Menu } from './components/Menu';
 import RegistrarGastos from './components/Gastos/RegistrarGastos';
 import ListarGastos from './components/Gastos/ListarGastos';
@@ -12,6 +11,7 @@ import Divisa from './components/Divisas';
 import EditarGasto from './components/Gastos/EditarGasto';
 import Login from './components/Login';
 import { ProtectedRoute } from './components/ProtectedRoute.tsx';
+import ReporteGastos from './components/Gastos/ReporteGastos.jsx';
 
 function App() {
   return (
@@ -25,7 +25,7 @@ function App() {
               <ProtectedRoute>
                 <Menu />
                 <Routes>
-                  <Route path="/inicio" element={<Inicio />} />
+                  <Route path="/reportes" element={<ReporteGastos />} />
                   <Route path="/registro" element={<RegistrarGastos />} />
                   <Route path="/lista" element={<ListarGastos />} />
                   <Route path="/categorias" element={<Categorias />} />
@@ -33,7 +33,7 @@ function App() {
                   <Route path="/tipo-transaccion" element={<TipoTransaccion />} />
                   <Route path="/divisas" element={<Divisa />} />
                   <Route path="/editar-gasto/:id" element={<EditarGasto />} />
-                  <Route path="*" element={<Navigate to="/inicio" replace />} />
+                  <Route path="*" element={<Navigate to="/registro" replace />} />
                 </Routes>
               </ProtectedRoute>
             }

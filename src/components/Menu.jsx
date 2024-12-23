@@ -15,7 +15,7 @@ function Menu() {
       <div className="container-fluid">
         <a className="navbar-brand" href="#!">
           <i className="fa"></i>
-          <span>Gestión de Gastos</span>
+          <span>Controlalo</span>
         </a>
         <button
           className="navbar-toggler"
@@ -31,18 +31,18 @@ function Menu() {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav">
             <li className="nav-item">
-              <NavLink className="nav-link" to="/inicio">
-                Inicio
-              </NavLink>
-            </li>
-            <li className="nav-item">
               <NavLink className="nav-link" to="/registro">
-                Registrar gasto
+                Registrar movimiento
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink className="nav-link" to="/lista">
-                Lista de gastos
+                Lista de movimientos
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/reportes">
+                Reportes
               </NavLink>
             </li>
             <li className="nav-item ml-auto d-none d-md-block">

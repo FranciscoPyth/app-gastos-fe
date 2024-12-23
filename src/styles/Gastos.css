@@ -3,3 +3,24 @@
     overflow-y: auto;
   }
   
+  .export-btn {
+    background-color: #28a745; /* Verde */
+    color: white;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .export-btn:hover {
+    background-color: #218838; /* Verde más oscuro al pasar el mouse */
+  }
+  
+  .d-flex.justify-content-between.align-items-center {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .mt-3 {
+    margin-top: 1rem;
+  }
+  

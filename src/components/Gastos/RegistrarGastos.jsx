@@ -27,38 +27,32 @@ const RegistrarGastos = () => {
       setUserId(decoded.id);
     }
   }, []); // Dependencias vacías para ejecutar solo una vez al montar
-  
-  useEffect(() => {
-    if (userId) {
-      console.log('ID del usuario desde userId:', userId);
-    }
-  }, [userId]);
 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (userId) {
-          const [categoriasData, mediosDePagoData, divisasData, tipoTransaccionesData] = await Promise.all([
-            obtenerCategorias(userId),
-            obtenerMediosPago(userId),
-            obtenerDivisa(userId),
-            obtenerTipoTransaccion(userId)
-          ]);
+        if (!userId) {
+          console.log('Esperando por userId...');
+          return;
+        }
+        const [categoriasData, mediosDePagoData, divisasData, tipoTransaccionesData] = await Promise.all([
+          obtenerCategorias(userId),
+          obtenerMediosPago(userId),
+          obtenerDivisa(userId),
+          obtenerTipoTransaccion(userId)
+        ]);
   
-          setCategorias(categoriasData);
-          setMediosDePago(mediosDePagoData);
-          setDivisas(divisasData);
-          setTipoTransacciones(tipoTransaccionesData);
+        setCategorias(categoriasData);
+        setMediosDePago(mediosDePagoData);
+        setDivisas(divisasData);
+        setTipoTransacciones(tipoTransaccionesData);
   
-          const token = localStorage.getItem('token');
-          if (token) {
-            const decodedToken = parseJwt(token);
-            setUsuario(decodedToken);
-            console.log('Usuario:', decodedToken);
-          }
-        } else {
-          console.error('UserId no está definido');
+        const token = localStorage.getItem('token');
+        if (token) {
+          const decodedToken = parseJwt(token);
+          setUsuario(decodedToken);
+          console.log('Usuario:', decodedToken);
         }
       } catch (error) {
         console.error('Error al cargar los datos:', error);
@@ -66,7 +60,7 @@ const RegistrarGastos = () => {
     };
   
     fetchData();
-  }, [userId]); // Dependencia en userId para asegurarnos de que se ejecute después de establecer userId
+  }, [userId]); // Este useEffect depende de userId, pero sólo se ejecuta cuando userId tiene un valor
   
 
   const handleDateChange = (event) => {
@@ -89,7 +83,7 @@ const RegistrarGastos = () => {
       if (usuario && usuario.id) {
         data.usuario_id = usuario.id;
         await registrarGasto(data);
-        console.log('Gasto registrado:', data);
+        console.log('Movimiento registrado:', data);
         navigate('/lista');
       } else {
         console.error('No se ha encontrado el ID del usuario.');
@@ -101,8 +95,19 @@ const RegistrarGastos = () => {
 
   return (
     <div className="container mt-5 mb-5">
-      <h2 className="mb-4">Registrar Nuevo Gasto</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="mb-3">
+          <label htmlFor="tipostransaccion_id" className="form-label">Tipo Transacción</label>
+          <div className="d-flex">
+            <select className="form-select me-2" id="tipostransaccion_id" {...register('tipostransaccion_id', { required: true })}>
+              <option value="">Selecciona un Tipo de Transacción</option>
+              {tipoTransacciones.map((tipoTransaccion) => (
+                <option key={tipoTransaccion.id} value={tipoTransaccion.id}>{tipoTransaccion.descripcion}</option>
+              ))}
+            </select>
+            <button type="button" className="btn btn-outline-primary" onClick={() => navigate('/tipo-transaccion')}>+</button>
+          </div>
+        </div>
         <div className="mb-3">
           <label htmlFor="monto" className="form-label">Monto</label>
           <input type="number" step="0.01" className="form-control" id="monto" {...register('monto', { required: true })} />
@@ -161,19 +166,7 @@ const RegistrarGastos = () => {
             <button type="button" className="btn btn-outline-primary" onClick={() => navigate('/divisas')}>+</button>
           </div>
         </div>
-        <div className="mb-3">
-          <label htmlFor="tipostransaccion_id" className="form-label">Tipo Transacción</label>
-          <div className="d-flex">
-            <select className="form-select me-2" id="tipostransaccion_id" {...register('tipostransaccion_id', { required: true })}>
-              <option value="">Selecciona un Tipo de Transacción</option>
-              {tipoTransacciones.map((tipoTransaccion) => (
-                <option key={tipoTransaccion.id} value={tipoTransaccion.id}>{tipoTransaccion.descripcion}</option>
-              ))}
-            </select>
-            <button type="button" className="btn btn-outline-primary" onClick={() => navigate('/tipo-transaccion')}>+</button>
-          </div>
-        </div>
-        <button type="submit" className="btn btn-primary me-2">Registrar Gasto</button>
+        <button type="submit" className="btn btn-primary me-2">Registrar Movimiento</button>
         <button type="button" className="btn btn-secondary" onClick={() => navigate('/lista')}>Cancelar</button>
       </form>
     </div>

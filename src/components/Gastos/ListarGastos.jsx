@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import * as XLSX from 'xlsx';
 import { obtenerGastos, eliminarGasto, actualizarGasto } from '../../services/gastos.services';
 import { obtenerCategorias } from '../../services/categoria.services';
 import { obtenerTipoTransaccion } from '../../services/tipoTransaccion.services';
@@ -123,10 +124,30 @@ const ListarGastos = () => {
     }
   };
 
+  const exportToExcel = () => {
+    // Formatear los datos para el archivo Excel
+    const data = gastos.map((gasto) => ({
+      Descripción: gasto.descripcion,
+      Monto: gasto.monto,
+      Fecha: formatDate(gasto.fecha),
+      Divisa: divisas.find((divisa) => divisa.id === gasto.divisa_id)?.descripcion || 'N/A',
+      Tipo_Transacción: tiposTransaccion.find((tipo) => tipo.id === gasto.tipostransaccion_id)?.descripcion || 'N/A',
+      Método_Pago: metodosPago.find((metodo) => metodo.id === gasto.metodopago_id)?.descripcion || 'N/A',
+      Categoría: categorias.find((categoria) => categoria.id === gasto.categoria_id)?.descripcion || 'N/A',
+    }));
+
+    // Crear un libro de trabajo
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Gastos');
+
+    // Descargar el archivo
+    XLSX.writeFile(workbook, 'movimientos.xlsx');
+  };
+
   return (
     <div className="card mb-4">
       <div className="card-body">
-        <h5 className="card-title">Listado de Gastos</h5>
         <div className="table-responsive">
           <table className="table table-striped">
             <thead>
@@ -173,13 +194,24 @@ const ListarGastos = () => {
             </tbody>
           </table>
         </div>
-        <div className="mt-3 d-flex justify-content-start">
-          <Link to="/inicio" className="btn btn-outline-primary me-2">
-            <i className="fa fa-home me-1"></i> Volver a Inicio
-          </Link>
-          <Link to="/registro" className="btn btn-outline-success">
-            <i className="fa fa-plus me-1"></i> Registrar Nuevo Gasto
-          </Link>
+        <div className="d-flex justify-content-between align-items-center mt-3">
+          {/* Botones a la izquierda */}
+          <div>
+            <Link to="/inicio" className="btn btn-outline-primary me-2">
+              <i className="fa fa-home me-1"></i> Volver a Inicio
+            </Link>
+            <Link to="/registro" className="btn btn-outline-success">
+              <i className="fa fa-plus me-1"></i> Registrar Movimiento
+            </Link>
+          </div>
+
+          {/* Botón de exportación a la derecha */}
+          <button
+            className="btn btn-success export-btn"
+            onClick={exportToExcel}
+          >
+            <i className="fa fa-download me-1"></i> Exportar a Excel
+          </button>
         </div>
       </div>
 
@@ -187,7 +219,7 @@ const ListarGastos = () => {
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>
-            {modalType === 'consultar' ? 'Consultar Gasto' : 'Editar Gasto'}
+            {modalType === 'consultar' ? 'Consultar Movimiento' : 'Editar Movimiento'}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body className="modal-body-scroll">

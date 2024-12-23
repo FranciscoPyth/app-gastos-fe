@@ -1,9 +1,9 @@
-// Gasto.js
+// Movimiento.js
 
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Gasto = ({ gasto, onDelete }) => {
+const Movimiento = ({ gasto, onDelete }) => {
   const handleEliminarClick = () => {
     onDelete(gasto.id); // Llama a la función onDelete pasando el ID del gasto
   };
@@ -28,4 +28,4 @@ const Gasto = ({ gasto, onDelete }) => {
   );
 };
 
-export default Gasto;
+export default Movimiento;
