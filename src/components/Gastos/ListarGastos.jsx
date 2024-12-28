@@ -37,6 +37,13 @@ const ListarGastos = () => {
     metodopago: '',
     categoria: ''
   });
+
+  // Nuevas variables de estado para los filtros
+  const [filtroFecha, setFiltroFecha] = useState('');
+  const [filtroDescripcion, setFiltroDescripcion] = useState('');
+  const [filtroMonto, setFiltroMonto] = useState({ min: '', max: '' });
+  const [filtroTipoTransaccion, setFiltroTipoTransaccion] = useState('');
+  const [filtroFechaRango, setFiltroFechaRango] = useState({ inicio: '', fin: '' });
   
   const [usuario_id, setUsuario] = useState(null);
   const token = localStorage.getItem('token');
@@ -70,6 +77,39 @@ const ListarGastos = () => {
 
     fetchData();
   }, [token, usuario_id]);
+
+  // Función para manejar los filtros
+  const filtrarGastos = () => {
+    let filtrados = gastos;
+
+    if (filtroDescripcion.trim()) {
+      filtrados = filtrados.filter((gasto) =>
+        gasto.descripcion.toLowerCase().includes(filtroDescripcion.toLowerCase())
+      );
+    }
+
+    if (filtroMonto.min) {
+      filtrados = filtrados.filter((gasto) => gasto.monto >= parseFloat(filtroMonto.min));
+    }
+
+    if (filtroMonto.max) {
+      filtrados = filtrados.filter((gasto) => gasto.monto <= parseFloat(filtroMonto.max));
+    }
+
+    if (filtroTipoTransaccion) {
+      filtrados = filtrados.filter((gasto) => gasto.tipostransaccion_id === parseInt(filtroTipoTransaccion));
+    }
+
+    if (filtroFechaRango.inicio) {
+      filtrados = filtrados.filter((gasto) => new Date(gasto.fecha) >= new Date(filtroFechaRango.inicio));
+    }
+
+    if (filtroFechaRango.fin) {
+      filtrados = filtrados.filter((gasto) => new Date(gasto.fecha) <= new Date(filtroFechaRango.fin));
+    }
+
+    return filtrados;
+  };
 
   const handleEliminarGasto = async (id) => {
     try {
@@ -126,7 +166,7 @@ const ListarGastos = () => {
 
   const exportToExcel = () => {
     // Formatear los datos para el archivo Excel
-    const data = gastos.map((gasto) => ({
+    const data = filtrarGastos().map((gasto) => ({
       Descripción: gasto.descripcion,
       Monto: gasto.monto,
       Fecha: formatDate(gasto.fecha),
@@ -148,7 +188,92 @@ const ListarGastos = () => {
   return (
     <div className="card mb-4">
       <div className="card-body">
-        <div className="table-responsive">
+        {/* Filtros */}
+        <div className="mb-3 d-flex justify-content-between">
+          <div className="me-3">
+            <label htmlFor="filtroDescripcion" className="form-label">
+              Filtrar por Descripción
+            </label>
+            <input
+              id="filtroDescripcion"
+              type="text"
+              className="form-control"
+              value={filtroDescripcion}
+              onChange={(e) => setFiltroDescripcion(e.target.value)}
+              placeholder="Ingrese una descripción"
+            />
+          </div>
+          <div className="me-3">
+            <label htmlFor="filtroMontoMin" className="form-label">
+              Monto Mínimo
+            </label>
+            <input
+              id="filtroMontoMin"
+              type="number"
+              className="form-control"
+              value={filtroMonto.min}
+              onChange={(e) => setFiltroMonto({ ...filtroMonto, min: e.target.value })}
+              placeholder="Monto mínimo"
+            />
+          </div>
+          <div className="me-3">
+            <label htmlFor="filtroMontoMax" className="form-label">
+              Monto Máximo
+            </label>
+            <input
+              id="filtroMontoMax"
+              type="number"
+              className="form-control"
+              value={filtroMonto.max}
+              onChange={(e) => setFiltroMonto({ ...filtroMonto, max: e.target.value })}
+              placeholder="Monto máximo"
+            />
+          </div>
+          <div className="me-3">
+            <label htmlFor="filtroTipoTransaccion" className="form-label">
+              Tipo de Transacción
+            </label>
+            <select
+              id="filtroTipoTransaccion"
+              className="form-control"
+              value={filtroTipoTransaccion}
+              onChange={(e) => setFiltroTipoTransaccion(e.target.value)}
+            >
+              <option value="">Seleccionar tipo</option>
+              {tiposTransaccion.map((tipo) => (
+                <option key={tipo.id} value={tipo.id}>
+                  {tipo.descripcion}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="me-3">
+            <label htmlFor="filtroFechaInicio" className="form-label">
+              Fecha Inicio
+            </label>
+            <input
+              id="filtroFechaInicio"
+              type="date"
+              className="form-control"
+              value={filtroFechaRango.inicio}
+              onChange={(e) => setFiltroFechaRango({ ...filtroFechaRango, inicio: e.target.value })}
+            />
+          </div>
+          <div>
+            <label htmlFor="filtroFechaFin" className="form-label">
+              Fecha Fin
+            </label>
+            <input
+              id="filtroFechaFin"
+              type="date"
+              className="form-control"
+              value={filtroFechaRango.fin}
+              onChange={(e) => setFiltroFechaRango({ ...filtroFechaRango, fin: e.target.value })}
+            />
+          </div>
+        </div>
+        
+        <div className="table-responsive custom-table-container">
           <table className="table table-striped">
             <thead>
               <tr>
@@ -159,7 +284,7 @@ const ListarGastos = () => {
               </tr>
             </thead>
             <tbody>
-              {gastos.map((gasto) => (
+              {filtrarGastos().map((gasto) => (
                 <tr key={gasto.id}>
                   <td>{gasto.descripcion}</td>
                   <td>${gasto.monto}</td>
