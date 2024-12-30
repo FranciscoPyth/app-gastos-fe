@@ -18,6 +18,10 @@ const formatDate = (date) => {
   return `${day}/${month}/${year}`;
 };
 
+const formatMonto = (value) => {
+  return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" }).format(value);
+};
+
 
 const ListarGastos = () => {
   const [gastos, setGastos] = useState([]);
@@ -39,7 +43,6 @@ const ListarGastos = () => {
   });
 
   // Nuevas variables de estado para los filtros
-  const [filtroFecha, setFiltroFecha] = useState('');
   const [filtroDescripcion, setFiltroDescripcion] = useState('');
   const [filtroMonto, setFiltroMonto] = useState({ min: '', max: '' });
   const [filtroTipoTransaccion, setFiltroTipoTransaccion] = useState('');
@@ -167,14 +170,14 @@ const ListarGastos = () => {
   const exportToExcel = () => {
     // Formatear los datos para el archivo Excel
     const data = filtrarGastos().map((gasto) => ({
-      Descripción: gasto.descripcion,
-      Monto: gasto.monto,
       Fecha: formatDate(gasto.fecha),
-      Divisa: divisas.find((divisa) => divisa.id === gasto.divisa_id)?.descripcion || 'N/A',
-      Tipo_Transacción: tiposTransaccion.find((tipo) => tipo.id === gasto.tipostransaccion_id)?.descripcion || 'N/A',
-      Método_Pago: metodosPago.find((metodo) => metodo.id === gasto.metodopago_id)?.descripcion || 'N/A',
+      Mes: new Date(gasto.fecha).toLocaleString('es-ES', { month: 'long' }), // Obtiene el nombre del mes
       Categoría: categorias.find((categoria) => categoria.id === gasto.categoria_id)?.descripcion || 'N/A',
-    }));
+      Descripción: gasto.descripcion,
+      "Medio de Pago": metodosPago.find((metodo) => metodo.id === gasto.metodopago_id)?.descripcion || 'N/A',
+      Moneda: divisas.find((divisa) => divisa.id === gasto.divisa_id)?.descripcion || 'N/A',
+      Monto: formatMonto(gasto.monto),
+    }));    
 
     // Crear un libro de trabajo
     const worksheet = XLSX.utils.json_to_sheet(data);
@@ -287,7 +290,7 @@ const ListarGastos = () => {
               {filtrarGastos().map((gasto) => (
                 <tr key={gasto.id}>
                   <td>{gasto.descripcion}</td>
-                  <td>${gasto.monto}</td>
+                  <td>{formatMonto(gasto.monto)}</td>
                   <td>{formatDate(gasto.fecha)}</td>
                   <td className="align-middle">
                     <div className="d-flex align-items-center">
