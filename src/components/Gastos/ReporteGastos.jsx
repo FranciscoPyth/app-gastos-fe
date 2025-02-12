@@ -14,6 +14,7 @@ import {
   Legend,
 } from "chart.js";
 import { parseJwt } from "../parseJWT.ts";
+import { formatDate, formatMonto } from "../../helpers/format.ts";
 
 ChartJS.register(
   CategoryScale,
@@ -23,14 +24,6 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
-const formatDate = (date) => {
-  const parsedDate = new Date(date);
-  const day = String(parsedDate.getUTCDate()).padStart(2, "0");
-  const month = String(parsedDate.getUTCMonth() + 1).padStart(2, "0");
-  const year = parsedDate.getUTCFullYear();
-  return `${day}/${month}/${year}`;
-};
 
 const ReporteGastos = () => {
   const { register, handleSubmit, reset } = useForm();
@@ -171,7 +164,9 @@ const ReporteGastos = () => {
           >
             <div className="card-body">
               <h5 className="card-title">Total Egreso (ARS)</h5>
-              <p className="card-text">${totals.egresoARS.toFixed(2)}</p>
+              <p className="card-text">
+                {formatMonto(totals.egresoARS.toFixed(2))}
+              </p>
             </div>
           </div>
           <div
@@ -180,7 +175,9 @@ const ReporteGastos = () => {
           >
             <div className="card-body">
               <h5 className="card-title">Total Ingreso (ARS)</h5>
-              <p className="card-text">${totals.ingresoARS.toFixed(2)}</p>
+              <p className="card-text">
+                {formatMonto(totals.ingresoARS.toFixed(2))}
+              </p>
             </div>
           </div>
           <div
@@ -189,7 +186,9 @@ const ReporteGastos = () => {
           >
             <div className="card-body">
               <h5 className="card-title">Total USD</h5>
-              <p className="card-text">${totals.totalUSD.toFixed(2)}</p>
+              <p className="card-text">
+                {formatMonto(totals.totalUSD.toFixed(2))}
+              </p>
             </div>
           </div>
           <div
@@ -198,7 +197,9 @@ const ReporteGastos = () => {
           >
             <div className="card-body">
               <h5 className="card-title">Total USDT</h5>
-              <p className="card-text">${totals.totalUSDT.toFixed(2)}</p>
+              <p className="card-text">
+                {formatMonto(totals.totalUSDT.toFixed(2))}
+              </p>
             </div>
           </div>
           <div
@@ -207,7 +208,9 @@ const ReporteGastos = () => {
           >
             <div className="card-body">
               <h5 className="card-title">Total ARS</h5>
-              <p className="card-text">${totals.totalARS.toFixed(2)}</p>
+              <p className="card-text">
+                {formatMonto(totals.totalARS.toFixed(2))}
+              </p>
             </div>
           </div>
         </div>
@@ -286,21 +289,23 @@ const ReporteGastos = () => {
         <table className="table table-bordered">
           <thead>
             <tr>
-              <th>Descripción</th>
-              <th>Monto</th>
               <th>Fecha</th>
+              <th>Categoría</th>
+              <th>Descripción</th>
               <th>Método de Pago</th>
-              <th>Tipo de Transacción</th>
+              <th>Divisa</th>
+              <th>Monto</th>
             </tr>
           </thead>
           <tbody>
-            {filteredData.map((row) => (
-              <tr key={row.id}>
-                <td>{row.descripcion}</td>
-                <td>{row.monto}</td>
-                <td>{formatDate(row.fecha)}</td>
-                <td>{row.metodoPagoDescripcion}</td>
-                <td>{row.tipoTransaccionDescripcion}</td>
+            {filteredData.map((gasto) => (
+              <tr key={gasto.id}>
+                <td>{formatDate(gasto.fecha)}</td>
+                <td>{gasto.Categoria?.descripcion || "Sin Categoría"}</td>
+                <td>{gasto.descripcion}</td>
+                <td>{gasto.MetodosPago?.descripcion || "Sin Método"}</td>
+                <td>{gasto.Divisa?.descripcion || "Sin Moneda"}</td>
+                <td>{formatMonto(gasto.monto)}</td>
               </tr>
             ))}
           </tbody>
