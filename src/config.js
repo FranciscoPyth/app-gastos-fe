@@ -3,7 +3,7 @@ En este archivo se definen las URL de los servicios REST que se van a consumir. 
 estandarizar un poco más el proceso y no tener que modificar cada archivo que consuma una URL
 */
 
-const urlServidor = "http://localhost:4000"//"http://localhost:4000"// "https://budgeting-server.onrender.com"; // https://vps-4600756-x.dattaweb.com
+const urlServidor = "https://vps-4600756-x.dattaweb.com" //"http://localhost:4000"// "https://budgeting-server.onrender.com"; // https://vps-4600756-x.dattaweb.com
 
 
 const urlGastos = urlServidor + "/api/gastos";
