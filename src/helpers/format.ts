@@ -7,10 +7,24 @@ export const formatDate = (date) => {
     return `${day}/${month}/${year}`;
   };
   
-  export const formatMonto = (value) => {
-    console.log(value);
-    return new Intl.NumberFormat("es-AR", {
-      style: "currency",
-      currency: "ARS",
-    }).format(value);
-  };
+export const formatMonto = (value) => {
+  return new Intl.NumberFormat("es-AR", {
+    style: "currency",
+    currency: "ARS",
+  }).format(value);
+};
+
+export const formatMontoExport = (value) => {
+  // Convertimos a número si viene como string
+  const parsedValue = typeof value === "number" ? value : parseFloat(value);
+
+  if (isNaN(parsedValue)) {
+    console.warn("formatMonto recibió un valor no numérico:", value);
+    return "N/A";
+  }
+
+  return parsedValue.toLocaleString("es-ES", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};

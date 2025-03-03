@@ -13,7 +13,11 @@ import { obtenerDivisa } from "../../services/divisa.services";
 import { Modal, Button, Form } from "react-bootstrap";
 import { parseJwt } from "../parseJWT.ts";
 import "../../styles/Gastos.css";
-import { formatDate, formatMonto } from "../../helpers/format.ts";
+import {
+  formatDate,
+  formatMonto,
+  formatMontoExport,
+} from "../../helpers/format.ts";
 
 const ListarGastos = () => {
   const [gastos, setGastos] = useState([]);
@@ -36,6 +40,7 @@ const ListarGastos = () => {
 
   // Nuevas variables de estado para los filtros
   const [filtroDescripcion, setFiltroDescripcion] = useState("");
+  const [filtroCategoria, setFiltroCategoria] = useState("");
   const [filtroMonto, setFiltroMonto] = useState({ min: "", max: "" });
   const [filtroTipoTransaccion, setFiltroTipoTransaccion] = useState("");
   const [filtroFechaRango, setFiltroFechaRango] = useState({
@@ -92,6 +97,11 @@ const ListarGastos = () => {
           .toLowerCase()
           .includes(filtroDescripcion.toLowerCase())
       );
+    }
+
+    if (filtroCategoria) {
+      filtrados = filtrados.filter((gasto) => 
+        gasto.categoria_id === parseInt(filtroCategoria));
     }
 
     if (filtroMonto.min) {
@@ -185,9 +195,9 @@ const ListarGastos = () => {
   };
 
   const exportToExcel = () => {
+    const sortedData = filtrarGastos().sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
     // Formatear los datos para el archivo Excel
-    const data = filtrarGastos().map((gasto) => (
-      {
+    const data = sortedData.map((gasto) => ({
       Fecha: formatDate(gasto.fecha),
       Mes: new Date(gasto.fecha).toLocaleString("es-ES", { month: "long" }), // Obtiene el nombre del mes
       Categoría:
@@ -200,7 +210,7 @@ const ListarGastos = () => {
       Moneda:
         divisas.find((divisa) => divisa.id === gasto.divisa_id)?.descripcion ||
         "N/A",
-      Monto: gasto.monto,
+      Monto: formatMontoExport(gasto.monto),
     }));
 
     // Crear un libro de trabajo
@@ -231,6 +241,42 @@ const ListarGastos = () => {
             />
           </div>
           <div className="me-3">
+            <label htmlFor="filtroCategoria" className="form-label">
+              Filtrar por Categoría
+            </label>
+            <select
+              id="filtroCategoria"
+              className="form-control"
+              value={filtroCategoria}
+              onChange={(e) => setFiltroCategoria(e.target.value)}
+            >
+              <option value="">Seleccionar categoría</option>
+              {categorias.map((categoria) => (
+                <option key={categoria.id} value={categoria.id}>
+                  {categoria.descripcion}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="me-3">
+            <label htmlFor="filtroTipoTransaccion" className="form-label">
+              Tipo de Transacción
+            </label>
+            <select
+              id="filtroTipoTransaccion"
+              className="form-control"
+              value={filtroTipoTransaccion}
+              onChange={(e) => setFiltroTipoTransaccion(e.target.value)}
+            >
+              <option value="">Seleccionar tipo</option>
+              {tiposTransaccion.map((tipo) => (
+                <option key={tipo.id} value={tipo.id}>
+                  {tipo.descripcion}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="me-3">
             <label htmlFor="filtroMontoMin" className="form-label">
               Monto Mínimo
             </label>
@@ -259,24 +305,6 @@ const ListarGastos = () => {
               }
               placeholder="Monto máximo"
             />
-          </div>
-          <div className="me-3">
-            <label htmlFor="filtroTipoTransaccion" className="form-label">
-              Tipo de Transacción
-            </label>
-            <select
-              id="filtroTipoTransaccion"
-              className="form-control"
-              value={filtroTipoTransaccion}
-              onChange={(e) => setFiltroTipoTransaccion(e.target.value)}
-            >
-              <option value="">Seleccionar tipo</option>
-              {tiposTransaccion.map((tipo) => (
-                <option key={tipo.id} value={tipo.id}>
-                  {tipo.descripcion}
-                </option>
-              ))}
-            </select>
           </div>
           <div className="me-3">
             <label htmlFor="filtroFechaInicio" className="form-label">
@@ -328,41 +356,43 @@ const ListarGastos = () => {
               </tr>
             </thead>
             <tbody>
-              {filtrarGastos().map((gasto) => (
-                <tr key={gasto.id}>
-                  <td>{formatDate(gasto.fecha)}</td>
-                  <td>{gasto.Categoria?.descripcion || "Sin Categoría"}</td>
-                  <td>{gasto.descripcion}</td>
-                  <td>{gasto.MetodosPago?.descripcion || "Sin Método"}</td>
-                  <td>{gasto.Divisa?.descripcion || "Sin Moneda"}</td>
-                  <td>{formatMonto(gasto.monto)}</td>
-                  <td className="align-middle">
-                    <div className="d-flex align-items-center">
-                      <button
-                        className="btn btn-sm btn-outline-primary me-2"
-                        title="Consultar"
-                        onClick={() => handleShowModal("consultar", gasto)}
-                      >
-                        <i className="fa fa-eye"></i>
-                      </button>
-                      <button
-                        className="btn btn-sm btn-outline-primary me-2"
-                        title="Modificar"
-                        onClick={() => handleShowModal("editar", gasto)}
-                      >
-                        <i className="fa fa-edit"></i>
-                      </button>
-                      <button
-                        className="btn btn-sm btn-outline-danger"
-                        title="Eliminar"
-                        onClick={() => handleEliminarGasto(gasto.id)}
-                      >
-                        <i className="fa fa-trash"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {filtrarGastos()
+                .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+                .map((gasto) => (
+                  <tr key={gasto.id}>
+                    <td>{formatDate(gasto.fecha)}</td>
+                    <td>{gasto.Categoria?.descripcion || "Sin Categoría"}</td>
+                    <td>{gasto.descripcion}</td>
+                    <td>{gasto.MetodosPago?.descripcion || "Sin Método"}</td>
+                    <td>{gasto.Divisa?.descripcion || "Sin Moneda"}</td>
+                    <td>{formatMonto(gasto.monto)}</td>
+                    <td className="align-middle">
+                      <div className="d-flex align-items-center">
+                        <button
+                          className="btn btn-sm btn-outline-primary me-2"
+                          title="Consultar"
+                          onClick={() => handleShowModal("consultar", gasto)}
+                        >
+                          <i className="fa fa-eye"></i>
+                        </button>
+                        <button
+                          className="btn btn-sm btn-outline-primary me-2"
+                          title="Modificar"
+                          onClick={() => handleShowModal("editar", gasto)}
+                        >
+                          <i className="fa fa-edit"></i>
+                        </button>
+                        <button
+                          className="btn btn-sm btn-outline-danger"
+                          title="Eliminar"
+                          onClick={() => handleEliminarGasto(gasto.id)}
+                        >
+                          <i className="fa fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
