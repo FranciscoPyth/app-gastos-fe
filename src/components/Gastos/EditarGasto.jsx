@@ -39,7 +39,7 @@ const EditarGasto = () => {
 
   return (
     <div className="container">
-      <h2>Editar Gasto</h2>
+      <h2>Editar Movimiento</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Descripción</label>

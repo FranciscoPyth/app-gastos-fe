@@ -3,7 +3,7 @@ En este archivo se definen las URL de los servicios REST que se van a consumir. 
 estandarizar un poco más el proceso y no tener que modificar cada archivo que consuma una URL
 */
 
-const urlServidor = "https://app-gastos-ba.onrender.com"//"http://localhost:4000"// "https://budgeting-server.onrender.com";
+const urlServidor = "https://vps-4600756-x.dattaweb.com" //"http://localhost:4000"// "https://budgeting-server.onrender.com"; // https://vps-4600756-x.dattaweb.com
 
 
 const urlGastos = urlServidor + "/api/gastos";
@@ -12,6 +12,7 @@ const urlCategorias = urlServidor + "/api/categorias";
 const urlMediosDePago = urlServidor + "/api/metodosPagos";
 const urlTipoTransacciones = urlServidor + "/api/tiposTransacciones";
 const urlLogin = urlServidor + "/api/login";
+const urlAudio = urlServidor + "/api/audio";
 
 
 export const config = {
@@ -21,5 +22,6 @@ export const config = {
     urlCategorias,
     urlMediosDePago,
     urlTipoTransacciones,
-    urlLogin
+    urlLogin,
+    urlAudio
 }

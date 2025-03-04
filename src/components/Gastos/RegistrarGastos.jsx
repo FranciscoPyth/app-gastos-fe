@@ -1,180 +1,196 @@
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import { registrarGasto } from '../../services/gastos.services';
-import { obtenerCategorias } from '../../services/categoria.services';
-import { obtenerMediosPago } from '../../services/metodoPago.services';
-import { obtenerDivisa } from '../../services/divisa.services';
-import { obtenerTipoTransaccion } from '../../services/tipoTransaccion.services';
-import { format, parse, isValid } from 'date-fns';
-import { parseJwt } from '../parseJWT.ts';
+import React, { useState, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import {
+  registrarGasto,
+  registrarGastoConAudio,
+} from "../../services/gastos.services";
+import { format, parse } from "date-fns";
+import { useGastoForm } from "../../hooks/useGastoForm.ts";
+import SelectInput from "./SelectInput.tsx";
+import TextInput from "./TextInput.tsx";
+import { FaMicrophone, FaStop } from "react-icons/fa";
 
 const RegistrarGastos = () => {
-  const { register, handleSubmit, setValue } = useForm();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm();
   const navigate = useNavigate();
+  const {
+    categorias,
+    mediosDePago,
+    divisas,
+    tipoTransacciones,
+    userId,
+    loading,
+  } = useGastoForm(setValue);
 
-  const [categorias, setCategorias] = useState([]);
-  const [mediosDePago, setMediosDePago] = useState([]);
-  const [divisas, setDivisas] = useState([]);
-  const [tipoTransacciones, setTipoTransacciones] = useState([]);
-  const [usuario, setUsuario] = useState(null);
-  const [userId, setUserId] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const recognizerRef = useRef(null);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      const decoded = parseJwt(token);
-      setUserId(decoded.id);
-    }
-  }, []); // Dependencias vacías para ejecutar solo una vez al montar
-  
-  useEffect(() => {
-    if (userId) {
-      console.log('ID del usuario desde userId:', userId);
-    }
-  }, [userId]);
-
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (userId) {
-          const [categoriasData, mediosDePagoData, divisasData, tipoTransaccionesData] = await Promise.all([
-            obtenerCategorias(userId),
-            obtenerMediosPago(userId),
-            obtenerDivisa(userId),
-            obtenerTipoTransaccion(userId)
-          ]);
-  
-          setCategorias(categoriasData);
-          setMediosDePago(mediosDePagoData);
-          setDivisas(divisasData);
-          setTipoTransacciones(tipoTransaccionesData);
-  
-          const token = localStorage.getItem('token');
-          if (token) {
-            const decodedToken = parseJwt(token);
-            setUsuario(decodedToken);
-            console.log('Usuario:', decodedToken);
-          }
-        } else {
-          console.error('UserId no está definido');
-        }
-      } catch (error) {
-        console.error('Error al cargar los datos:', error);
-      }
-    };
-  
-    fetchData();
-  }, [userId]); // Dependencia en userId para asegurarnos de que se ejecute después de establecer userId
-  
-
-  const handleDateChange = (event) => {
-    const inputDate = parse(event.target.value, 'yyyy-MM-dd', new Date());
-    if (isValid(inputDate)) {
-      const formattedDate = format(inputDate, 'dd/MM/yyyy');
-      setValue('fecha', formattedDate);
-    }
-  };
-
-  const setTodayDate = () => {
-    const today = new Date();
-    const formattedDate = format(today, 'dd/MM/yyyy');
-    setValue('fecha', formattedDate);
-  };
+  if (loading) return <div>Cargando...</div>;
 
   const onSubmit = async (data) => {
     try {
-      data.fecha = format(parse(data.fecha, 'dd/MM/yyyy', new Date()), 'yyyy-MM-dd');
-      if (usuario && usuario.id) {
-        data.usuario_id = usuario.id;
+      data.fecha = format(
+        parse(data.fecha, "dd/MM/yyyy", new Date()),
+        "yyyy-MM-dd"
+      );
+      if (userId) {
+        data.usuario_id = userId;
         await registrarGasto(data);
-        console.log('Gasto registrado:', data);
-        navigate('/lista');
+        navigate("/lista");
       } else {
-        console.error('No se ha encontrado el ID del usuario.');
+        console.error("No se ha encontrado el ID del usuario.");
       }
     } catch (error) {
-      console.error('Error al registrar el gasto:', error);
+      console.error("Error al registrar el gasto:", error);
+    }
+  };
+
+  const startRecording = async () => {
+    try {
+      const recognizer = new (window.SpeechRecognition ||
+        window.webkitSpeechRecognition)();
+      recognizer.lang = "es-ES";
+      recognizer.interimResults = false;
+      recognizer.maxAlternatives = 1;
+
+      recognizer.onresult = async (event) => {
+        const textoTranscrito = event.results[0][0].transcript;
+        console.log("Texto transcrito:", textoTranscrito);
+
+        try {
+          await registrarGastoConAudio(textoTranscrito, userId);
+          navigate("/lista");
+        } catch (error) {
+          console.error("Error al registrar el gasto con texto transcrito:", error);
+        }
+      };
+
+      recognizer.onerror = (event) => {
+        console.error("Error en la transcripción:", event.error);
+      };
+
+      recognizerRef.current = recognizer; // Guardamos la referencia
+      recognizer.start();
+      setIsRecording(true);
+
+    } catch (error) {
+      console.error("Error al iniciar la grabación:", error);
+    }
+  };
+
+  const stopRecording = () => {
+    if (recognizerRef.current) {
+      recognizerRef.current.stop();
+      setIsRecording(false);
+      console.log("Grabación detenida manualmente.");
     }
   };
 
   return (
     <div className="container mt-5 mb-5">
-      <h2 className="mb-4">Registrar Nuevo Gasto</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-3">
-          <label htmlFor="monto" className="form-label">Monto</label>
-          <input type="number" step="0.01" className="form-control" id="monto" {...register('monto', { required: true })} />
+        <SelectInput
+          label="Tipo Transacción"
+          id="tipostransaccion_id"
+          options={tipoTransacciones}
+          register={register}
+          required
+          onAddClick={() => navigate("/tipo-transaccion")}
+        />
+        <TextInput
+          label="Monto"
+          id="monto"
+          type="text"
+          placeholder="Ingrese el monto"
+          register={register}
+          validation={{
+            required: "El monto es obligatorio.",
+            validate: (value) =>
+              parseFloat(value.replace(",", ".")) >= 0.01
+                ? true
+                : "El monto debe ser mayor a 0.",
+          }}
+          error={errors.monto?.message}
+        />
+        <TextInput
+          label="Descripción"
+          id="descripcion"
+          type="text"
+          register={register}
+          required
+        />
+        <TextInput
+          label="Fecha de la transacción"
+          id="fecha"
+          type="text"
+          placeholder="DD/MM/YYYY"
+          register={register}
+          validation={{
+            required: "La fecha es obligatoria.",
+            pattern: {
+              value: /^\d{2}\/\d{2}\/\d{4}$/,
+              message: "El formato debe ser DD/MM/YYYY.",
+            },
+          }}
+          error={errors.fecha?.message}
+        />
+        <SelectInput
+          label="Categoría"
+          id="categoria_id"
+          options={categorias}
+          register={register}
+          required
+          onAddClick={() => navigate("/categorias")}
+        />
+        <SelectInput
+          label="Medio de Pago"
+          id="metodopago_id"
+          options={mediosDePago}
+          register={register}
+          required
+          onAddClick={() => navigate("/medio-pago")}
+        />
+        <SelectInput
+          label="Divisa"
+          id="divisa_id"
+          options={divisas}
+          register={register}
+          required
+          onAddClick={() => navigate("/divisas")}
+        />
+
+        <button type="submit" className="btn btn-primary mt-3 me-2">
+          Registrar Movimiento
+        </button>
+        <button
+          type="button"
+          className="btn btn-secondary mt-3"
+          onClick={() => navigate("/lista")}
+        >
+          Cancelar
+        </button>
+
+        {/* 🎤 Botón de grabación de audio */}
+        <div className="mt-3">
+          <button
+            type="button"
+            className={`btn ${
+              isRecording ? "btn-danger" : "btn-dark"
+            } rounded-circle`}
+            onClick={isRecording ? stopRecording : startRecording}
+          >
+            {isRecording ? <FaStop size={16} /> : <FaMicrophone size={16} />}
+          </button>
+          <span className="ms-2">
+            {isRecording ? "Registrando..." : "Registrar movimiento con audio"}
+          </span>
         </div>
-        <div className="mb-3">
-          <label htmlFor="descripcion" className="form-label">Descripción</label>
-          <input type="text" className="form-control" id="descripcion" {...register('descripcion', { required: true })} />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="fecha" className="form-label">Fecha de la transacción</label>
-          <div className="d-flex">
-            <input 
-              type="text" 
-              className="form-control me-2" 
-              id="fecha" 
-              placeholder="DD/MM/YYYY" 
-              onBlur={handleDateChange} 
-              {...register('fecha', { required: true })}
-            />
-            <button type="button" className="btn btn-outline-primary" onClick={setTodayDate}>Hoy</button>
-          </div>
-        </div>
-        <div className="mb-3">
-          <label htmlFor="categoria_id" className="form-label">Categoría</label>
-          <div className="d-flex">
-            <select className="form-select me-2" id="categoria_id" {...register('categoria_id', { required: true })}>
-              <option value="">Selecciona una categoría</option>
-              {categorias.map((categoria) => (
-                <option key={categoria.id} value={categoria.id}>{categoria.descripcion}</option>
-              ))}
-            </select>
-            <button type="button" className="btn btn-outline-primary" onClick={() => navigate('/categorias')}>+</button>
-          </div>
-        </div>
-        <div className="mb-3">
-          <label htmlFor="metodopago_id" className="form-label">Medio de Pago</label>
-          <div className="d-flex">
-            <select className="form-select me-2" id="metodopago_id" {...register('metodopago_id', { required: true })}>
-              <option value="">Selecciona un medio de pago</option>
-              {mediosDePago.map((medio) => (
-                <option key={medio.id} value={medio.id}>{medio.descripcion}</option>
-              ))}
-            </select>
-            <button type="button" className="btn btn-outline-primary" onClick={() => navigate('/medio-pago')}>+</button>
-          </div>
-        </div>
-        <div className="mb-3">
-          <label htmlFor="divisa_id" className="form-label">Divisa</label>
-          <div className="d-flex">
-            <select className="form-select me-2" id="divisa_id" {...register('divisa_id', { required: true })}>
-              <option value="">Selecciona una divisa</option>
-              {divisas.map((divisa) => (
-                <option key={divisa.id} value={divisa.id}>{divisa.descripcion}</option>
-              ))}
-            </select>
-            <button type="button" className="btn btn-outline-primary" onClick={() => navigate('/divisas')}>+</button>
-          </div>
-        </div>
-        <div className="mb-3">
-          <label htmlFor="tipostransaccion_id" className="form-label">Tipo Transacción</label>
-          <div className="d-flex">
-            <select className="form-select me-2" id="tipostransaccion_id" {...register('tipostransaccion_id', { required: true })}>
-              <option value="">Selecciona un Tipo de Transacción</option>
-              {tipoTransacciones.map((tipoTransaccion) => (
-                <option key={tipoTransaccion.id} value={tipoTransaccion.id}>{tipoTransaccion.descripcion}</option>
-              ))}
-            </select>
-            <button type="button" className="btn btn-outline-primary" onClick={() => navigate('/tipo-transaccion')}>+</button>
-          </div>
-        </div>
-        <button type="submit" className="btn btn-primary me-2">Registrar Gasto</button>
-        <button type="button" className="btn btn-secondary" onClick={() => navigate('/lista')}>Cancelar</button>
       </form>
     </div>
   );

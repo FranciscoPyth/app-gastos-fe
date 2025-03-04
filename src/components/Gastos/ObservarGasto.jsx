@@ -24,7 +24,7 @@ const ObservarGasto = () => {
 
   return (
     <div className="container">
-      <h2>Detalle del Gasto</h2>
+      <h2>Detalle del Movimiento</h2>
       <p><strong>ID:</strong> {gasto.id}</p>
       <p><strong>Descripción:</strong> {gasto.descripcion}</p>
       <p><strong>Monto:</strong> ${gasto.monto}</p>

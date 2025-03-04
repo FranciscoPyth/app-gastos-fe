@@ -4,6 +4,7 @@ import axios from 'axios';
 import { config } from '../config';
 
 const API_URL_GASTOS = config.urlGastos;
+const API_URL_AUDIO = config.urlAudio;
 
 // Función para registrar un nuevo gasto
 export const registrarGasto = async (nuevoGasto) => {
@@ -16,6 +17,22 @@ export const registrarGasto = async (nuevoGasto) => {
     throw error;
   }
 };
+
+// Función para registrar un gasto a partir de un texto
+export const registrarGastoConAudio = async (texto, usuario_id) => {
+  try {
+    console.log("Texto a enviar:", texto, "USER_ID:", usuario_id);
+    const response = await axios.post(API_URL_AUDIO, { texto, usuario_id }); // Enviar como JSON en el body
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error en registrarGastoConAudio:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
+};
+
 
 // Función para obtener la lista de gastos
 export const obtenerGastos = async (usuario_id) => {
