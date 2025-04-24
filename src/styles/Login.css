@@ -73,6 +73,26 @@
     background-color: #0056b3;
   }
   
+  .register-btn-primary-unique{
+    width: 100%; /* Un poco más pequeño que el botón principal */
+    padding: 0.3rem; /* Ligera reducción en el padding */
+    border: 2px solid black; /* Borde negro bien marcado */
+    border-radius: 4px;
+    background-color: #ffffff; /* Fondo blanco */
+    color: black;
+    font-size: 0.95rem; /* Un poco más pequeño en tamaño de fuente */
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 10px; /* Espacio respecto al botón de iniciar sesión */
+    transition: background-color 0.3s, color 0.3s; /* Transición suave */
+ }
+  
+  .register-btn-unique:hover {
+    background-color: black; /* Se oscurece al pasar el cursor */
+    color: white;
+  }
+
   .toast-success {
     background-color: #28a745;
   }

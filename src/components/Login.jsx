@@ -1,6 +1,7 @@
+// src/components/Login.jsx
 import React, { useState } from 'react';
 import { iniciarSesion } from '../services/login.services';
-import { ToastContainer, toast } from 'react-toastify'; 
+import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Login.css';
 
@@ -53,13 +54,22 @@ const Login = () => {
           />
         </div>
         <button type="submit" className="login-btn-primary-unique">Iniciar sesión</button>
+        <button 
+          type="button" 
+          className="btn btn-outline-secondary w-100 mt-2" 
+          onClick={() => navigate('/register-user')}
+        >
+          Registrarme
+        </button>
       </form>
+
       <footer className="login-footer">
-        <p>Quiero adquirir una cuenta...</p>
+        <p>Quiero adquirir más información...</p>
         <a href="https://wa.me/3513244486" target="_blank" rel="noopener noreferrer">
           Envíanos un mensaje por WhatsApp
         </a>
       </footer>
+
       <ToastContainer 
         position="top-right" 
         autoClose={5000} 

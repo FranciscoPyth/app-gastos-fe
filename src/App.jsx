@@ -1,4 +1,5 @@
 // App.js
+import './index.css';
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Menu } from './components/Menu';
@@ -10,6 +11,7 @@ import TipoTransaccion from './components/TiposTransacciones';
 import Divisa from './components/Divisas';
 import EditarGasto from './components/Gastos/EditarGasto';
 import Login from './components/Login';
+import RegisterUser from './components/Usuarios/RegisterUser';
 import { ProtectedRoute } from './components/ProtectedRoute.tsx';
 import ReporteGastos from './components/Gastos/ReporteGastos.jsx';
 
@@ -19,6 +21,7 @@ function App() {
       <div className="divBody">
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/register-user" element={<RegisterUser />} />
           <Route
             path="/*"
             element={
