@@ -51,6 +51,9 @@ const ListarGastos = () => {
   const [usuario_id, setUsuario] = useState(null);
   const token = localStorage.getItem("token");
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+
   useEffect(() => {
     const fetchData = async () => {
       if (token) {
@@ -222,14 +225,32 @@ const ListarGastos = () => {
     XLSX.writeFile(workbook, "movimientos.xlsx");
   };
 
+  // Función para manejar el cambio de página
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Obtener los gastos de la página actual
+  const getCurrentPageItems = () => {
+    const filteredItems = filtrarGastos();
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    return filteredItems
+      .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+      .slice(indexOfFirstItem, indexOfLastItem);
+  };
+
+  // Calcular el número total de páginas
+  const totalPages = Math.ceil(filtrarGastos().length / itemsPerPage);
+
   return (
     <div className="card mb-4">
       <div className="card-body">
         {/* Filtros */}
-        <div className="mb-3 d-flex justify-content-between">
-          <div className="me-3">
+        <div className="filters-container">
+          <div>
             <label htmlFor="filtroDescripcion" className="form-label">
-              Filtrar por Descripción
+              Descripción
             </label>
             <input
               id="filtroDescripcion"
@@ -237,12 +258,12 @@ const ListarGastos = () => {
               className="form-control"
               value={filtroDescripcion}
               onChange={(e) => setFiltroDescripcion(e.target.value)}
-              placeholder="Ingrese una descripción"
+              placeholder="Buscar por descripción"
             />
           </div>
-          <div className="me-3">
+          <div>
             <label htmlFor="filtroCategoria" className="form-label">
-              Filtrar por Categoría
+              Categoría
             </label>
             <select
               id="filtroCategoria"
@@ -250,7 +271,7 @@ const ListarGastos = () => {
               value={filtroCategoria}
               onChange={(e) => setFiltroCategoria(e.target.value)}
             >
-              <option value="">Seleccionar categoría</option>
+              <option value="">Todas las categorías</option>
               {categorias.map((categoria) => (
                 <option key={categoria.id} value={categoria.id}>
                   {categoria.descripcion}
@@ -258,9 +279,9 @@ const ListarGastos = () => {
               ))}
             </select>
           </div>
-          <div className="me-3">
+          <div>
             <label htmlFor="filtroTipoTransaccion" className="form-label">
-              Tipo de Transacción
+              Tipo
             </label>
             <select
               id="filtroTipoTransaccion"
@@ -268,7 +289,7 @@ const ListarGastos = () => {
               value={filtroTipoTransaccion}
               onChange={(e) => setFiltroTipoTransaccion(e.target.value)}
             >
-              <option value="">Seleccionar tipo</option>
+              <option value="">Todos los tipos</option>
               {tiposTransaccion.map((tipo) => (
                 <option key={tipo.id} value={tipo.id}>
                   {tipo.descripcion}
@@ -276,7 +297,7 @@ const ListarGastos = () => {
               ))}
             </select>
           </div>
-          <div className="me-3">
+          <div>
             <label htmlFor="filtroMontoMin" className="form-label">
               Monto Mínimo
             </label>
@@ -288,10 +309,10 @@ const ListarGastos = () => {
               onChange={(e) =>
                 setFiltroMonto({ ...filtroMonto, min: e.target.value })
               }
-              placeholder="Monto mínimo"
+              placeholder="Mínimo"
             />
           </div>
-          <div className="me-3">
+          <div>
             <label htmlFor="filtroMontoMax" className="form-label">
               Monto Máximo
             </label>
@@ -303,10 +324,10 @@ const ListarGastos = () => {
               onChange={(e) =>
                 setFiltroMonto({ ...filtroMonto, max: e.target.value })
               }
-              placeholder="Monto máximo"
+              placeholder="Máximo"
             />
           </div>
-          <div className="me-3">
+          <div>
             <label htmlFor="filtroFechaInicio" className="form-label">
               Fecha Inicio
             </label>
@@ -342,7 +363,7 @@ const ListarGastos = () => {
           </div>
         </div>
 
-        <div className="table-responsive custom-table-container">
+        <div className="table-responsive">
           <table className="table table-striped">
             <thead>
               <tr>
@@ -356,70 +377,101 @@ const ListarGastos = () => {
               </tr>
             </thead>
             <tbody>
-              {filtrarGastos()
-                .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
-                .map((gasto) => (
-                  <tr key={gasto.id}>
-                    <td>{formatDate(gasto.fecha)}</td>
-                    <td>{gasto.Categoria?.descripcion || "Sin Categoría"}</td>
-                    <td>{gasto.descripcion}</td>
-                    <td>{gasto.MetodosPago?.descripcion || "Sin Método"}</td>
-                    <td>{gasto.Divisa?.descripcion || "Sin Moneda"}</td>
-                    <td>{formatMonto(gasto.monto)}</td>
-                    <td className="align-middle">
-                      <div className="d-flex align-items-center">
-                        <button
-                          className="btn btn-sm btn-outline-primary me-2"
-                          title="Consultar"
-                          onClick={() => handleShowModal("consultar", gasto)}
-                        >
-                          <i className="fa fa-eye"></i>
-                        </button>
-                        <button
-                          className="btn btn-sm btn-outline-primary me-2"
-                          title="Modificar"
-                          onClick={() => handleShowModal("editar", gasto)}
-                        >
-                          <i className="fa fa-edit"></i>
-                        </button>
-                        <button
-                          className="btn btn-sm btn-outline-danger"
-                          title="Eliminar"
-                          onClick={() => handleEliminarGasto(gasto.id)}
-                        >
-                          <i className="fa fa-trash"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+              {getCurrentPageItems().map((gasto) => (
+                <tr key={gasto.id}>
+                  <td>{formatDate(gasto.fecha)}</td>
+                  <td>{gasto.Categoria?.descripcion || "Sin Categoría"}</td>
+                  <td>{gasto.descripcion}</td>
+                  <td>{gasto.MetodosPago?.descripcion || "Sin Método"}</td>
+                  <td>{gasto.Divisa?.descripcion || "Sin Moneda"}</td>
+                  <td>{formatMonto(gasto.monto)}</td>
+                  <td>
+                    <div className="action-buttons">
+                      <button
+                        className="btn btn-sm btn-outline-primary"
+                        title="Consultar"
+                        onClick={() => handleShowModal("consultar", gasto)}
+                      >
+                        <i className="fa fa-eye"></i>
+                      </button>
+                      <button
+                        className="btn btn-sm btn-outline-primary"
+                        title="Modificar"
+                        onClick={() => handleShowModal("editar", gasto)}
+                      >
+                        <i className="fa fa-edit"></i>
+                      </button>
+                      <button
+                        className="btn btn-sm btn-outline-danger"
+                        title="Eliminar"
+                        onClick={() => handleEliminarGasto(gasto.id)}
+                      >
+                        <i className="fa fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
 
-        <div className="d-flex justify-content-between align-items-center mt-3">
-          {/* Botones a la izquierda */}
-          <div>
-            <Link to="/inicio" className="btn btn-outline-primary me-2">
-              <i className="fa fa-home me-1"></i> Volver a Inicio
+        {/* Paginación Simplificada */}
+        <div className="pagination-container">
+          <div className="pagination-info">
+            Mostrando {Math.min(currentPage * itemsPerPage, filtrarGastos().length)} de {filtrarGastos().length} registros
+          </div>
+          <div className="pagination-controls">
+            <button
+              className="btn"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              <i className="fa fa-chevron-left"></i> Anterior
+            </button>
+            <div className="pagination-page-info">
+              Página {currentPage} de {totalPages}
+            </div>
+            <button
+              className="btn"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Siguiente <i className="fa fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+
+        {/* Botones de acción */}
+        <div className="bottom-buttons-container d-flex justify-content-between align-items-center mt-3">
+          <div className="d-flex flex-column flex-sm-row gap-2">
+            <Link to="/inicio" className="btn btn-outline-primary">
+              <i className="fa fa-home"></i>
+              <span>Inicio</span>
             </Link>
             <Link to="/registro" className="btn btn-outline-success">
-              <i className="fa fa-plus me-1"></i> Registrar Movimiento
+              <i className="fa fa-plus"></i>
+              <span>Nuevo Movimiento</span>
             </Link>
           </div>
 
-          {/* Botón de exportación a la derecha */}
           <button
             className="btn btn-success export-btn"
             onClick={exportToExcel}
           >
-            <i className="fa fa-download me-1"></i> Exportar a Excel
+            <i className="fa fa-download"></i>
+            <span>Exportar Excel</span>
           </button>
         </div>
       </div>
 
       {/* Modal */}
-      <Modal show={showModal} onHide={handleCloseModal}>
+      <Modal 
+        show={showModal} 
+        onHide={handleCloseModal}
+        className="mobile-modal"
+        centered
+      >
         <Modal.Header closeButton>
           <Modal.Title>
             {modalType === "consultar"
@@ -429,7 +481,7 @@ const ListarGastos = () => {
         </Modal.Header>
         <Modal.Body className="modal-body-scroll">
           {selectedGasto && (
-            <Form>
+            <Form className="mobile-form">
               <Form.Group className="mb-3" controlId="formDescripcion">
                 <Form.Label>Descripción</Form.Label>
                 <Form.Control

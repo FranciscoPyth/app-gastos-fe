@@ -28,3 +28,241 @@
   max-height: 400px; /* Ajusta esta altura según sea necesario */
   overflow-y: auto; /* Habilita el desplazamiento vertical */
 }
+
+/* Estilos responsive para móviles */
+@media screen and (max-width: 768px) {
+  .filters-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .filters-container > div {
+    width: 100%;
+    margin-right: 0 !important;
+  }
+
+  .table-responsive {
+    margin: 0 -15px;
+  }
+
+  .custom-table-container {
+    max-height: none;
+    overflow-x: auto;
+  }
+
+  /* Ajustes para la tabla en móviles */
+  .table {
+    font-size: 0.875rem;
+  }
+
+  .table td, .table th {
+    padding: 0.5rem;
+    white-space: nowrap;
+  }
+
+  /* Ajustes para los botones de acción */
+  .action-buttons {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .action-buttons .btn {
+    padding: 0.25rem 0.5rem;
+  }
+
+  /* Ajustes para el modal en móviles */
+  .modal-dialog {
+    margin: 0.5rem;
+    max-width: calc(100% - 1rem);
+  }
+
+  .modal-body-scroll {
+    max-height: calc(100vh - 200px);
+    padding: 1rem;
+  }
+
+  .modal-body .form-group {
+    margin-bottom: 1rem;
+  }
+
+  /* Ajustes para los botones inferiores */
+  .bottom-buttons-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .bottom-buttons-container .btn {
+    width: 100%;
+    margin: 0 !important;
+  }
+}
+
+/* Mejoras generales de UI */
+.form-control:focus {
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* Estilos para la paginación */
+.pagination {
+  margin-bottom: 0;
+  gap: 0.25rem;
+}
+
+.pagination .page-link {
+  border-radius: 4px;
+  padding: 0.375rem 0.75rem;
+  color: #28a745;
+  border-color: #28a745;
+  background-color: white;
+  transition: all 0.2s ease-in-out;
+}
+
+.pagination .page-link:hover {
+  background-color: #28a745;
+  color: white;
+  border-color: #28a745;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #28a745;
+  border-color: #28a745;
+  color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #6c757d;
+  border-color: #dee2e6;
+  background-color: #f8f9fa;
+}
+
+.pagination-info {
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+/* Ajustes responsive para la paginación */
+@media screen and (max-width: 768px) {
+  .pagination {
+    font-size: 0.875rem;
+  }
+
+  .pagination .page-link {
+    padding: 0.25rem 0.5rem;
+  }
+
+  /* Ocultar algunos números de página en móviles */
+  .pagination .page-item:not(:first-child):not(:last-child):not(.active) {
+    display: none;
+  }
+
+  .pagination-info {
+    font-size: 0.75rem;
+  }
+}
+
+/* Estilos para los filtros */
+.filters-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.filters-container > div {
+  min-width: 0; /* Evita que los filtros se desborden */
+}
+
+.filters-container .form-label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #495057;
+}
+
+.filters-container .form-control {
+  width: 100%;
+}
+
+/* Estilos para la paginación simplificada */
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1rem 0;
+  padding: 0.5rem 0;
+  border-top: 1px solid #dee2e6;
+}
+
+.pagination-info {
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pagination-controls .btn {
+  padding: 0.375rem 0.75rem;
+  color: #28a745;
+  background-color: white;
+  border: 1px solid #28a745;
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+}
+
+.pagination-controls .btn:hover:not(:disabled) {
+  background-color: #28a745;
+  color: white;
+}
+
+.pagination-controls .btn:disabled {
+  color: #6c757d;
+  border-color: #dee2e6;
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}
+
+.pagination-page-info {
+  font-weight: 500;
+  color: #495057;
+  min-width: 100px;
+  text-align: center;
+}
+
+/* Ajustes responsive */
+@media screen and (max-width: 1200px) {
+  .filters-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .filters-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .filters-container {
+    grid-template-columns: 1fr;
+  }
+
+  .pagination-container {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .pagination-controls {
+    justify-content: center;
+  }
+}
