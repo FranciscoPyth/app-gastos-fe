@@ -129,3 +129,12 @@
   .login-footer a:hover {
     text-decoration: underline;
   }
+
+  /* src/styles/Login.css */
+
+.Toastify__toast--error {
+  background-color: #ffe5e5;
+  color: #a80000;
+  font-weight: bold;
+  border-left: 5px solid #a80000;
+}
