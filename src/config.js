@@ -12,6 +12,7 @@ const urlCategorias = urlServidor + "/api/categorias";
 const urlMediosDePago = urlServidor + "/api/metodosPagos";
 const urlTipoTransacciones = urlServidor + "/api/tiposTransacciones";
 const urlLogin = urlServidor + "/api/login";
+const urlRegister = urlServidor + "/api/register";
 const urlAudio = urlServidor + "/api/audio";
 
 
@@ -23,5 +24,6 @@ export const config = {
     urlMediosDePago,
     urlTipoTransacciones,
     urlLogin,
-    urlAudio
+    urlAudio,
+    urlRegister
 }

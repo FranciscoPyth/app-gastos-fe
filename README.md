@@ -1,70 +1,224 @@
-# Getting Started with Create React App
+# 💰 Controlalo App (Frontend)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern React-based expense management application that helps users track, categorize, and analyze their personal finances with voice input capabilities and comprehensive reporting features.
 
-## Available Scripts
+## 🚀 Features
 
-In the project directory, you can run:
+### Core Functionality
+- **Expense Registration**: Add new expenses with detailed information
+- **Voice Input**: Register expenses using voice commands and speech recognition
+- **Expense Management**: View, edit, and delete expense records
+- **Categorization**: Organize expenses by custom categories
+- **Payment Methods**: Track different payment methods used
+- **Transaction Types**: Categorize transactions by type (income/expense)
+- **Multi-Currency Support**: Handle expenses in different currencies
+- **User Authentication**: Secure login and registration system
 
-### `npm start`
+### Advanced Features
+- **Expense Reports**: Generate detailed financial reports and analytics
+- **Data Export**: Export expense data to Excel format
+- **Real-time Charts**: Visualize spending patterns with interactive charts
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Protected Routes**: Secure access to authenticated features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🛠️ Technology Stack
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Frontend
+- **React 18** - Modern React with hooks and functional components
+- **React Router DOM** - Client-side routing
+- **React Hook Form** - Form handling with validation
+- **Axios** - HTTP client for API communication
+- **Tailwind CSS** - Utility-first CSS framework
+- **Bootstrap** - Additional UI components
 
-### `npm test`
+### UI Components & Libraries
+- **Radix UI** - Accessible UI primitives
+- **Heroicons** - Beautiful SVG icons
+- **Lucide React** - Additional icon library
+- **React Icons** - Comprehensive icon collection
+- **React Toastify** - Toast notifications
+- **React Modal** - Modal dialogs
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Data Visualization
+- **Chart.js** - Charting library
+- **React Chart.js 2** - React wrapper for Chart.js
+- **Recharts** - Composable charting library
 
-### `npm run build`
+### Development Tools
+- **ESLint** - Code linting
+- **PostCSS** - CSS processing
+- **Autoprefixer** - CSS vendor prefixing
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 📁 Project Structure
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+src/
+├── components/
+│   ├── Gastos/           # Expense-related components
+│   │   ├── RegistrarGastos.jsx
+│   │   ├── ListarGastos.jsx
+│   │   ├── EditarGasto.jsx
+│   │   ├── ReporteGastos.jsx
+│   │   ├── SelectInput.tsx
+│   │   └── TextInput.tsx
+│   ├── Usuarios/         # User management
+│   │   └── RegisterUser.jsx
+│   ├── Login.jsx         # Authentication
+│   ├── Menu.jsx          # Navigation
+│   ├── Categorias.jsx    # Category management
+│   ├── MetodoPago.jsx    # Payment methods
+│   ├── TiposTransacciones.jsx
+│   ├── Divisas.jsx       # Currency management
+│   └── ProtectedRoute.tsx
+├── services/             # API service layer
+│   ├── gastos.services.js
+│   ├── categoria.services.js
+│   ├── divisa.services.js
+│   ├── login.services.js
+│   ├── metodoPago.services.js
+│   └── tipoTransaccion.services.js
+├── hooks/                # Custom React hooks
+│   └── useGastoForm.ts
+├── helpers/              # Utility functions
+│   └── format.ts
+├── styles/               # CSS files
+├── config.js             # API configuration
+└── App.jsx               # Main application component
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🚀 Getting Started
 
-### `npm run eject`
+### Prerequisites
+- Node.js (version 16 or higher)
+- npm or yarn package manager
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Installation
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd app-gastos-fe
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+3. **Configure environment**
+   - The application is configured to connect to the backend API at `https://vps-4600756-x.dattaweb.com`
+   - If you need to use a different backend URL, update the `src/config.js` file
 
-## Learn More
+4. **Start the development server**
+   ```bash
+   npm start
+   ```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+5. **Open your browser**
+   - Navigate to [http://localhost:3000](http://localhost:3000)
+   - The application will automatically reload when you make changes
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 📋 Available Scripts
 
-### Code Splitting
+- **`npm start`** - Runs the app in development mode
+- **`npm test`** - Launches the test runner in interactive watch mode
+- **`npm run build`** - Builds the app for production to the `build` folder
+- **`npm run eject`** - Ejects from Create React App (one-way operation)
+- **`npm run lint`** - Runs ESLint to check code quality
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 🔧 Configuration
 
-### Analyzing the Bundle Size
+### API Configuration
+The application connects to a REST API backend. The API endpoints are configured in `src/config.js`:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- **Base URL**: `https://vps-4600756-x.dattaweb.com`
+- **Endpoints**:
+  - Expenses: `/api/gastos`
+  - Categories: `/api/categorias`
+  - Payment Methods: `/api/metodosPagos`
+  - Transaction Types: `/api/tiposTransacciones`
+  - Currencies: `/api/divisas`
+  - Authentication: `/api/login`, `/api/register`
+  - Voice Processing: `/api/audio`
 
-### Making a Progressive Web App
+## 🎯 Key Features Explained
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Voice Input System
+The application includes a sophisticated voice input system that allows users to register expenses using natural language:
+- Uses the Web Speech API for speech recognition
+- Supports Spanish language (`es-ES`)
+- Processes voice input and automatically categorizes expenses
+- Integrates with the backend AI processing service
 
-### Advanced Configuration
+### Expense Management
+- **CRUD Operations**: Full create, read, update, delete functionality
+- **Form Validation**: Comprehensive form validation using React Hook Form
+- **Date Handling**: Proper date formatting and parsing
+- **User Association**: All expenses are associated with authenticated users
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Reporting and Analytics
+- **Interactive Charts**: Visual representation of spending patterns
+- **Data Export**: Export functionality to Excel format
+- **Filtering**: Filter expenses by date, category, payment method
+- **Summary Statistics**: Overview of total expenses and trends
 
-### Deployment
+## 🔒 Security Features
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- **JWT Authentication**: Secure token-based authentication
+- **Protected Routes**: Route protection for authenticated users
+- **Input Validation**: Client-side and server-side validation
+- **Secure API Communication**: HTTPS communication with backend
 
-### `npm run build` fails to minify
+## 🎨 UI/UX Features
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- **Responsive Design**: Mobile-first approach with Tailwind CSS
+- **Modern Interface**: Clean, intuitive user interface
+- **Accessibility**: WCAG compliant components using Radix UI
+- **Toast Notifications**: User feedback for actions
+- **Loading States**: Proper loading indicators throughout the app
+
+## 🚀 Deployment
+
+### Production Build
+```bash
+npm run build
+```
+
+The build process creates an optimized production bundle in the `build` folder.
+
+### Deployment Options
+- **Netlify**: Drag and drop the `build` folder
+- **Vercel**: Connect your repository for automatic deployments
+- **AWS S3**: Upload the `build` folder to an S3 bucket
+- **Traditional Hosting**: Upload the `build` folder to your web server
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🆘 Support
+
+If you encounter any issues or have questions:
+1. Check the existing issues in the repository
+2. Create a new issue with detailed information
+3. Contact the development team
+
+## 🔄 Version History
+
+- **v0.1.0** - Initial release with core expense management features
+- Voice input functionality
+- Multi-currency support
+- Comprehensive reporting system
+- User authentication and authorization
+
+---
+
+**Built with ❤️ using React and modern web technologies**
