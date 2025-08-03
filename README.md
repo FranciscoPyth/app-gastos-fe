@@ -1,4 +1,4 @@
-# 💰 Expense Management App (Frontend)
+# 💰 Controlalo App (Frontend)
 
 A modern React-based expense management application that helps users track, categorize, and analyze their personal finances with voice input capabilities and comprehensive reporting features.
 
