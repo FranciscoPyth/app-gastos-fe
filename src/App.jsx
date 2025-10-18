@@ -12,6 +12,7 @@ import Divisa from './components/Divisas';
 import EditarGasto from './components/Gastos/EditarGasto';
 import Login from './components/Login';
 import RegisterUser from './components/Usuarios/RegisterUser';
+import ConsultarGastos from './components/ConsultarGastos';
 import { ProtectedRoute } from './components/ProtectedRoute.tsx';
 import ReporteGastos from './components/Gastos/ReporteGastos.jsx';
 
@@ -22,6 +23,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/register-user" element={<RegisterUser />} />
+          <Route path="/consultar-gastos" element={<ConsultarGastos />} />
           <Route
             path="/*"
             element={

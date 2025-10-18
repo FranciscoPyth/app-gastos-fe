@@ -80,3 +80,16 @@ export const eliminarGasto = async (idGasto) => {
     throw error;
   }
 };
+
+// Función para obtener gastos por número de teléfono (sin autenticación)
+export const obtenerGastosPorTelefono = async (telefono) => {
+  try {
+    const response = await axios.get(`${API_URL_GASTOS}/consulta-telefono`, {
+      params: { telefono }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error en obtenerGastosPorTelefono:', error.response ? error.response.data : error.message);
+    throw error;
+  }
+};

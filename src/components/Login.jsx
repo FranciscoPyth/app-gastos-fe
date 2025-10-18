@@ -117,6 +117,13 @@ const Login = () => {
         >
           Registrarme
         </button>
+        <button 
+          type="button" 
+          className="btn btn-outline-info w-100 mt-2" 
+          onClick={() => navigate('/consultar-gastos')}
+        >
+          Sólo consultar gastos
+        </button>
       </form>
 
       <footer className="login-footer">
